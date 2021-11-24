@@ -1,4 +1,5 @@
-part of 'edit_products_cubit.dart';
+import 'package:equatable/equatable.dart';
+import 'package:prayers_application/data/model/product_model.dart';
 
 abstract class EditProductsState extends Equatable {
   const EditProductsState();
@@ -15,26 +16,27 @@ class ProductLoadingState extends EditProductsState {
 }
 
 class ProductLoadedState extends EditProductsState {
-  final List<Product> product;
+  //final List<Product> product;
+  final Product product;
   const ProductLoadedState({required this.product});
   @override
   List<Object> get props => [product];
 }
 
-class ProductEditChangeSuccessState extends EditProductsState {
+class ProductEditSuccessState extends EditProductsState {
   @override
   List<Object> get props => [];
 }
 
-class ProductEditChangeFailedState extends EditProductsState {
+class ProductEditFailedState extends EditProductsState {
   final String responseMessage;
 
-  const ProductEditChangeFailedState(this.responseMessage);
+  const ProductEditFailedState(this.responseMessage);
   @override
   List<Object> get props => [responseMessage];
 }
 
-class ProductEditChangeLoadingState extends EditProductsState {
+class ProductEditLoadingState extends EditProductsState {
   @override
   List<Object> get props => [];
 }

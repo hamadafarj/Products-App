@@ -1,4 +1,4 @@
-part of 'add_product_cubit.dart';
+import 'package:equatable/equatable.dart';
 
 abstract class AddProductState extends Equatable {
   const AddProductState();
@@ -22,7 +22,7 @@ class AddProductFailedState extends AddProductState {
   List<Object> get props => [responseMessage];
 }
 
-class AddProductChangeLoadingState extends AddProductState {
+class AddProductLoadingState extends AddProductState {
   @override
   List<Object> get props => [];
 }

@@ -1,9 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.prayers_application">
    <uses-permission android:name="android.permission.INTERNET"/>
+   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
    <application
         android:label="prayers_application"
         android:icon="@mipmap/ic_launcher">
+          <meta-data
+        android:name="com.google.android.gms.ads.APPLICATION_ID"
+        android:value="ca-app-pub-8466260290776430~8670466045"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

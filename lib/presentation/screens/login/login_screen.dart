@@ -40,8 +40,9 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           );
         } else if (state is LoginSuccessState) {
-          Navigator.pushNamedAndRemoveUntil(
-              context, homeScrren, (route) => false);
+          Navigator.pushNamed(context, homeScrren, arguments: state.user);
+          // Navigator.pushNamedAndRemoveUntil(
+          //     context, homeScrren,arguments:state.user,(route) => false);
         }
       },
       builder: (context, state) {

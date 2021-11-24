@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:prayers_application/constants/my_string.dart';
+import 'package:prayers_application/presentation/my_card/my_card_screen.dart';
 import 'package:prayers_application/presentation/screens/edit_products/cubit/edit_products_cubit.dart';
 import 'package:prayers_application/presentation/screens/edit_products/edit_products.dart';
 import 'package:prayers_application/presentation/screens/login/cubit/login_cubit.dart';
@@ -13,7 +14,7 @@ import 'presentation/screens/home/cubit/home_cubit.dart';
 import 'presentation/screens/home/home_screen.dart';
 
 class AppRouter {
-  Route? generateRoute(RouteSettings settings) {
+  static Route<dynamic>? generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case loginScrren:
         return MaterialPageRoute(
@@ -30,10 +31,14 @@ class AppRouter {
           ),
         );
       case homeScrren:
+        // final userData = settings.arguments as User;
+        //?? token as User
         return MaterialPageRoute(
           builder: (_) => BlocProvider(
             create: (contxt) => HomeCubit(),
-            child: const HomeScreen(),
+            child: const HomeScreen(
+                //  user: userData,
+                ),
           ),
         );
       case editProduct:
@@ -42,7 +47,7 @@ class AppRouter {
           builder: (_) => BlocProvider(
             create: (contxt) => EditProductsCubit(),
             child: EditProducts(
-              productId: productId,
+              productDocId: productId,
             ),
           ),
         );
@@ -52,6 +57,8 @@ class AppRouter {
                   create: (context) => AddProductCubit(),
                   child: const AddProductScreen(),
                 ));
+      case myCard:
+        return MaterialPageRoute(builder: (_) => const MyCardScreen());
     }
   }
 }

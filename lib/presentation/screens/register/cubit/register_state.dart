@@ -15,7 +15,7 @@ class RegisterLoadingState extends RegisterState {
 }
 
 class RegisterSuccessState extends RegisterState {
-  final UserCredential user;
+  final User user;
 
   const RegisterSuccessState(this.user);
   @override

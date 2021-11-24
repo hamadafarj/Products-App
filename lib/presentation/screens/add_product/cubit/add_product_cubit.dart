@@ -1,27 +1,34 @@
 import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
 import 'package:prayers_application/data/repositories/user_repository.dart';
-part 'add_product_state.dart';
+import 'add_product_state.dart';
 
 class AddProductCubit extends Cubit<AddProductState> {
   AddProductCubit() : super(AddProductInitial());
   final _userRepository = UserRepository();
 
   Future addProduct({
-    required String productsDetails,
     required String productsName,
+    required String productsDetails,
     required String productsImage,
     required String productscategory,
-    required bool productsIsSally,
+    required bool productsIsSale,
+    required String productsPrice,
+    required DateTime productDate,
   }) async {
-    emit(AddProductChangeLoadingState());
     try {
-      await _userRepository.addDateProduct(productsName, productsDetails,
-          productsImage, productscategory, productsIsSally);
+      emit(AddProductLoadingState());
+      await _userRepository.addDateProduct(
+          productsName: productsName,
+          productsDetails: productsDetails,
+          productsImage: productsImage,
+          productsIsSale: productsIsSale,
+          productscategory: productscategory,
+          productsPrice: productsPrice,
+          productDate: productDate);
+      emit(AddProductSuccessState());
     } catch (error) {
       emit(AddProductFailedState(error.toString()));
       return error;
     }
-    emit(AddProductSuccessState());
   }
 }

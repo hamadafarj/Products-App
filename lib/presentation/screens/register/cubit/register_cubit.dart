@@ -2,7 +2,6 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:prayers_application/data/repositories/user_repository.dart';
-
 part 'register_state.dart';
 
 class RegisterCubit extends Cubit<RegisterState> {
@@ -21,7 +20,7 @@ class RegisterCubit extends Cubit<RegisterState> {
       required String phone,
       required String name}) async {
     bool isFormValid = validationSignUpData(email, password, name, phone);
-    UserCredential user;
+    User? user;
     if (isFormValid) {
       emit(RegisterLoadingState());
       try {
@@ -31,7 +30,7 @@ class RegisterCubit extends Cubit<RegisterState> {
         emit(RegisterWrongCredintialState(error.toString()));
         return error;
       }
-      emit(RegisterSuccessState(user));
+      emit(RegisterSuccessState(user!));
     } else {
       emit(RegisterValidationErrorState(emailErrorMessage, passwordErrorMessage,
           nameErrorMessage, phoneErrorMessage));

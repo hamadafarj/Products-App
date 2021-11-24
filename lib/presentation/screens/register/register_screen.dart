@@ -19,13 +19,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   TextEditingController nameController = TextEditingController();
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   emailController = TextEditingController();
-  //   passwordController = TextEditingController();
-  // }
-
   @override
   void dispose() {
     super.dispose();
@@ -46,13 +39,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           );
         } else if (state is RegisterSuccessState) {
+          Navigator.pushNamed(context, homeScrren, arguments: state.user);
+
           // ScaffoldMessenger.of(context).showSnackBar(
           //   const SnackBar(
           //     content: Text("RegisterSuccessState"),
           //   ),
-          // );
-          Navigator.pushNamedAndRemoveUntil(
-              context, homeScrren, (route) => false);
+          // // );
+          // Navigator.pushNamedAndRemoveUntil(
+          //     context, homeScrren, (route) => false);
         }
       },
       builder: (context, state) {

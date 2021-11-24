@@ -5,20 +5,32 @@ class Product {
   final String productName;
   final String productImage;
   final String productDetails;
-  final String productsCategory;
-  final bool productsIsSally;
-  Product(this.productName, this.productImage, this.productDetails,
-      this.productsCategory, this.productsIsSally);
-  factory Product.fromJson(QueryDocumentSnapshot<Map<String, dynamic>> json) =>
+  final String productCategory;
+  String productPrice;
+  final DateTime productDate;
+  final bool productsIsSale;
+  int cardNumberItem = 0;
+  Product(
+    this.productName,
+    this.productImage,
+    this.productDetails,
+    this.productCategory,
+    this.productPrice,
+    this.productDate,
+    this.productsIsSale,
+  );
+  factory Product.fromJson(DocumentSnapshot<Map<String, dynamic>> json) =>
       _productJson(json);
 }
 
-Product _productJson(QueryDocumentSnapshot<Map<String, dynamic>> json) {
+Product _productJson(DocumentSnapshot<Map<String, dynamic>> json) {
   return Product(
     json['products_name'] as String,
     json['products_image'] as String,
     json['products_details'] as String,
     json['products_category'] as String,
-    json['products_isSally'] as bool,
+    json['products_price'] as String,
+    (json['products_date'] as Timestamp).toDate(),
+    json['products_isSale'] as bool,
   );
 }

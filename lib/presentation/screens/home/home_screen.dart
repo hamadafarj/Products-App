@@ -3,11 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:prayers_application/constants/my_string.dart';
 import 'package:prayers_application/data/model/product_model.dart';
-
-import 'cubit/home_cubit.dart';
+import 'package:prayers_application/presentation/my_card/cubit/mycard_cubit.dart';
+import 'package:prayers_application/presentation/screens/home/cubit/home_cubit.dart';
+import 'cubit/home_state.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  //final User user;
+  const HomeScreen({
+    Key? key,
+    //required this.user,
+  }) : super(key: key);
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -59,11 +64,7 @@ class _HomeScreenState extends State<HomeScreen>
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          leading: _isSearching
-              ? const BackButton(
-                  color: Colors.black,
-                )
-              : Container(),
+          iconTheme: const IconThemeData(color: Colors.green),
           backgroundColor: Colors.white,
           title: _isSearching
               ? buildSearchField()
@@ -73,96 +74,65 @@ class _HomeScreenState extends State<HomeScreen>
                 ),
           actions: buildAppBarAction(),
         ),
-        body: BlocBuilder<HomeCubit, HomeState>(
-          builder: (context, state) {
-            if (state is HomeLoadingState) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            if (state is HomeLoadedState) {
-              allProducts = (state).product;
-              return Column(
-                children: [
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(top: 30, right: 10, left: 10),
-                    child: SizedBox(
-                      height: 80,
-                      child: Column(
-                        children: [
-                          TabBar(
-                              isScrollable: true,
-                              controller: tabController,
-                              labelColor: Colors.green,
-                              indicatorColor: Colors.transparent,
-                              labelStyle: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w700,
-                              ),
-                              unselectedLabelStyle: const TextStyle(
-                                fontSize: 13,
-                                color: Colors.grey,
-                                fontWeight: FontWeight.w700,
-                              ),
-                              onTap: (index) {
-                                if (tabController.indexIsChanging) {
-                                  print("dddd ${tabController.index}");
-                                  switch (tabController.index) {
-                                    case 0:
-                                      BlocProvider.of<HomeCubit>(context)
-                                          .getAllProduct();
-                                      break;
-                                    case 1:
-                                      BlocProvider.of<HomeCubit>(context)
-                                          .geSpecificProduct(
-                                              productsCategory: "A");
-                                      break;
-                                    case 2:
-                                      BlocProvider.of<HomeCubit>(context)
-                                          .geSpecificProduct(
-                                              productsCategory: "B");
-                                      break;
-                                    case 3:
-                                      BlocProvider.of<HomeCubit>(context)
-                                          .geSpecificProduct(
-                                              productsCategory: "C");
-                                      break;
-                                    case 4:
-                                      BlocProvider.of<HomeCubit>(context)
-                                          .geSpecificProduct(
-                                              productsCategory: "D");
-                                      break;
-                                  }
-                                }
-                              },
-                              tabs: tabs
-                              // List.generate(
-                              //   allProducts.length,
-                              //   (index) => Text("ff"),
-                              // ),
-                              ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: const [
-                              CircleAvatar(
-                                backgroundColor: Colors.red,
-                                maxRadius: 10,
-                              ),
-                              Text("Products is Sale"),
-                              CircleAvatar(
-                                backgroundColor: Colors.green,
-                                maxRadius: 10,
-                              ),
-                              Text("Products is still available"),
-                              // Text("Click the item to watsh Products details"),
-                            ],
-                          )
-                        ],
-                      ),
+        drawer: const MyDrawer(
+            // user: widget.user,
+            ),
+        body: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 30, right: 10, left: 10),
+              child: SizedBox(
+                height: 80,
+                child: Column(
+                  children: [
+                    TabBar(
+                        isScrollable: true,
+                        controller: tabController,
+                        labelColor: Colors.green,
+                        indicatorColor: Colors.transparent,
+                        labelStyle: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        unselectedLabelStyle: const TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        onTap: (index) => _handleTabSelection(),
+                        tabs: tabs),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: const [
+                        CircleAvatar(
+                          backgroundColor: Colors.red,
+                          maxRadius: 10,
+                        ),
+                        Text("Products is Sale"),
+                        CircleAvatar(
+                          backgroundColor: Colors.green,
+                          maxRadius: 10,
+                        ),
+                        Text("Products is still available"),
+                        // Text("Click the item to watsh Products details"),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+            BlocBuilder<HomeCubit, HomeState>(
+              builder: (context, state) {
+                if (state is HomeLoadingState) {
+                  return const ContainerDesign(
+                    widget: Center(
+                      child: CircularProgressIndicator(),
                     ),
-                  ),
-                  Expanded(
+                  );
+                }
+                if (state is HomeLoadedState) {
+                  allProducts = (state).product;
+                  return Expanded(
                     child: TabBarView(
                         physics: const NeverScrollableScrollPhysics(),
                         controller: tabController,
@@ -193,51 +163,16 @@ class _HomeScreenState extends State<HomeScreen>
                             searchedForProduct: searchedForProduct,
                           ),
                         ]),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        FloatingActionButton(
-                          tooltip: null,
-                          onPressed: () {
-                            //Navigator.pushNamed(context, loginScrren);
-                            print("dddd ${tabController.index > 0}");
-                            if (tabController.index > 0) {
-                              tabController
-                                  .animateTo((tabController.index - 1));
-                            }
-                          },
-                          child: const Icon(Icons.west_outlined),
-                        ),
-                        FloatingActionButton(
-                          tooltip: null,
-                          onPressed: () {
-                            Navigator.pushNamed(context, addProduct);
-                          },
-                          child: const Icon(Icons.add),
-                        ),
-                        FloatingActionButton(
-                          tooltip: null,
-                          onPressed: () {
-                            print("dddd ${tabController.index < 4}");
-                            if (tabController.index < 4) {
-                              tabController
-                                  .animateTo((tabController.index + 1));
-                            }
-                          },
-                          child: const Icon(Icons.arrow_forward),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              );
-            } else {
-              return const Center(child: Text('error_message'));
-            }
-          },
+                  );
+                } else {
+                  return const Center(child: Text('error_message'));
+                }
+              },
+            ),
+            PageFoter(
+              tabController: tabController,
+            )
+          ],
         ));
   }
 
@@ -261,34 +196,6 @@ class _HomeScreenState extends State<HomeScreen>
       ];
     }
   }
-
-  List<Widget> tabs = const [
-    Tab(
-        icon: Text(
-      "All Product ",
-      style: TextStyle(color: Colors.black),
-    )),
-    Tab(
-        icon: Text(
-      "Product A",
-      style: TextStyle(color: Colors.black),
-    )),
-    Tab(
-        icon: Text(
-      "Product B",
-      style: TextStyle(color: Colors.black),
-    )),
-    Tab(
-        icon: Text(
-      "Product C",
-      style: TextStyle(color: Colors.black),
-    )),
-    Tab(
-        icon: Text(
-      "Product D",
-      style: TextStyle(color: Colors.black),
-    )),
-  ];
 
   void _startSearch() {
     ModalRoute.of(context)!
@@ -325,9 +232,7 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  void addSearchedFOrItemsToSearchedList(
-    String searchedProducts,
-  ) {
+  void addSearchedFOrItemsToSearchedList(String searchedProducts) {
     searchedForProduct = allProducts
         .where((character) =>
             character.productName.toLowerCase().startsWith(searchedProducts))
@@ -355,7 +260,7 @@ class ProductItem extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  product.productsIsSally
+                  product.productsIsSale
                       ? Container(
                           height: double.infinity,
                           width: 5,
@@ -386,19 +291,42 @@ class ProductItem extends StatelessWidget {
               InkWell(
                   onTap: () {
                     Navigator.pushNamed(context, editProduct,
-                        arguments: product.productName);
+                        arguments: product.productDocsId);
                   },
                   child: const Text("edit")),
               InkWell(
+                  onTap: () async {
+                    bool checkItem =
+                        BlocProvider.of<MycardCubit>(context).additemToList(
+                      product,
+                    );
+                    if (checkItem) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Your Product in Card now"),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                              "Product number in Card ${product.cardNumberItem}"),
+                        ),
+                      );
+                    }
+                    product.cardNumberItem = product.cardNumberItem + 1;
+                  },
+                  child: const Text("add to Card")),
+              InkWell(
                   onTap: () {
-                    print("objectascac ${product.productDocsId}");
                     BlocProvider.of<HomeCubit>(context)
                         .deleteProduct(product.productDocsId);
+                    Navigator.pushReplacementNamed(context, homeScrren);
                   },
                   child: const Text(
                     "delete",
                     style: TextStyle(color: Colors.red),
-                  ))
+                  )),
             ],
           ),
         ),
@@ -427,31 +355,27 @@ class AllProductsTab extends StatelessWidget {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                decoration:
-                    BoxDecoration(border: Border.all(color: Colors.black)),
-                width: double.infinity,
-                height: MediaQuery.of(context).size.height * 0.67,
-                child: ListView.builder(
-                    itemCount: searchTextController.text.isEmpty
-                        ? allProducts.length
-                        : searchedForProduct.length,
-                    itemBuilder: (BuildContext ctxt, int index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: SizedBox(
-                          height: 100,
-                          child: ProductItem(
-                            product: searchTextController.text.isEmpty
-                                ? allProducts[index]
-                                : searchedForProduct[index],
+            ContainerDesign(
+              widget: allProducts.isEmpty
+                  ? const Center(
+                      child: Text("In this Categary there not any item"))
+                  : ListView.builder(
+                      itemCount: searchTextController.text.isEmpty
+                          ? allProducts.length
+                          : searchedForProduct.length,
+                      itemBuilder: (BuildContext ctxt, int index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SizedBox(
+                            height: 100,
+                            child: ProductItem(
+                              product: searchTextController.text.isEmpty
+                                  ? allProducts[index]
+                                  : searchedForProduct[index],
+                            ),
                           ),
-                        ),
-                      );
-                    }),
-              ),
+                        );
+                      }),
             ),
           ],
         ),
@@ -496,14 +420,14 @@ void showProductsDetails(
                     ),
                     ShowDiolgWidget(
                       title: "Product Category",
-                      product: product.productsCategory,
+                      product: product.productCategory,
                     ),
                     const SizedBox(
                       height: 30,
                     ),
                     ShowDiolgWidget(
-                      title: "Product isSally",
-                      product: product.productsIsSally.toString(),
+                      title: "Product isSale",
+                      product: product.productsIsSale.toString(),
                     )
                   ],
                 ),
@@ -542,5 +466,92 @@ class ShowDiolgWidget extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+class PageFoter extends StatelessWidget {
+  final TabController tabController;
+  const PageFoter({
+    Key? key,
+    required this.tabController,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          ElevatedButton(
+            onPressed: () {
+              if (tabController.index > 0) {
+                tabController.animateTo((tabController.index - 1));
+              }
+            },
+            child: const Icon(Icons.west_outlined),
+          ),
+          FloatingActionButton(
+            heroTag: "btn 2",
+            onPressed: () {
+              Navigator.pushNamed(context, addProduct);
+            },
+            child: const Icon(Icons.add),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (tabController.index < 4) {
+                tabController.animateTo((tabController.index + 1));
+              }
+            },
+            child: const Icon(Icons.arrow_forward),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+List<Widget> tabs = const [
+  Tab(
+      icon: Text(
+    "All Product ",
+    style: TextStyle(color: Colors.black),
+  )),
+  Tab(
+      icon: Text(
+    "Product A",
+    style: TextStyle(color: Colors.black),
+  )),
+  Tab(
+      icon: Text(
+    "Product B",
+    style: TextStyle(color: Colors.black),
+  )),
+  Tab(
+      icon: Text(
+    "Product C",
+    style: TextStyle(color: Colors.black),
+  )),
+  Tab(
+      icon: Text(
+    "Product D",
+    style: TextStyle(color: Colors.black),
+  )),
+];
+
+class ContainerDesign extends StatelessWidget {
+  final Widget widget;
+  const ContainerDesign({Key? key, required this.widget}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+            decoration: BoxDecoration(border: Border.all(color: Colors.black)),
+            width: double.infinity,
+            height: MediaQuery.of(context).size.height * 0.67,
+            child: widget));
   }
 }

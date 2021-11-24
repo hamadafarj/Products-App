@@ -1,4 +1,5 @@
-part of 'home_cubit.dart';
+import 'package:equatable/equatable.dart';
+import 'package:prayers_application/data/model/product_model.dart';
 
 abstract class HomeState extends Equatable {
   const HomeState();

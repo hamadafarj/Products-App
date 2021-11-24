@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:prayers_application/data/model/product_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserRepository {
   final FirebaseAuth _firebaseAuth;
@@ -13,33 +14,50 @@ class UserRepository {
   Future<User?> signInWithCredentials(String email, String password) async {
     UserCredential userCredential = await _firebaseAuth
         .signInWithEmailAndPassword(email: email, password: password);
+    print("jid ${userCredential.user}");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("UserToken", userCredential.user!.toString());
     return userCredential.user;
   }
 
-  Future<UserCredential> signUp(
+  Future<dynamic> getUser() async {
+    final User? user = FirebaseAuth.instance.currentUser;
+    return user;
+  }
+
+  Future<User?> signUp(
       {required String email,
       required String password,
       required String name,
       required String phone}) async {
     UserCredential user = await _firebaseAuth.createUserWithEmailAndPassword(
-        email: email, password: password);
-
+      email: email,
+      password: password,
+    );
+    print("jid ${user.user!.uid}");
+    user.user!.updateDisplayName(name);
+    //user.user!.updatePhotoURL();
     addUserData(name, phone, email);
-    return user;
+    return user.user;
   }
 
-  addDateProduct(
-      String productsDetails,
-      String productsName,
-      String productsImage,
-      String productscategory,
-      bool productsIsSally) async {
+  addDateProduct({
+    required String productsName,
+    required String productsDetails,
+    required String productsImage,
+    required String productscategory,
+    required String productsPrice,
+    required DateTime productDate,
+    required bool productsIsSale,
+  }) async {
     await products.doc().set({
       'products_details': productsDetails,
-      'products_image': productsName,
-      'products_name': productsImage,
+      'products_image': productsImage,
+      'products_name': productsName,
       'products_category': productscategory,
-      'products_isSally': productsIsSally,
+      'products_isSale': productsIsSale,
+      'products_price': productsPrice,
+      'products_date': productDate,
     });
     return products;
   }
@@ -52,7 +70,7 @@ class UserRepository {
           'products_name': productsName,
           'products_image': productsImage,
           'products_details': productsDetails,
-          'products_isSally': productsIsSale
+          'products_isSale': productsIsSale
         })
         .then((_) => print('Success'))
         .catchError((error) => print('Failed: $error'));
@@ -87,29 +105,19 @@ class UserRepository {
         var a = querySnapshot.docs[i];
         var pro = Product.fromJson(a);
         pro.productDocsId = querySnapshot.docs[i].id;
-        print("object ${pro.productDocsId}");
         product.add(pro);
       }
     });
     return product;
   }
 
-  Future<List<Product>> getProductData(String productDocsId) async {
-    List<Product> product = [];
-    await FirebaseFirestore.instance
-        .collection("products")
-        .where('products_name', isEqualTo: productDocsId)
-        .get()
-        .then((querySnapshot) {
-      for (int i = 0; i < querySnapshot.docs.length; i++) {
-        var a = querySnapshot.docs[i];
-        var pro = Product.fromJson(a);
-        pro.productDocsId = querySnapshot.docs[i].id;
-        print("object ${pro.productDocsId}");
-        product.add(pro);
-      }
-    });
-
+  Future<Product> getProductData(String productDocsId) async {
+    Product product;
+    var x = await FirebaseFirestore.instance
+        .collection('products')
+        .doc(productDocsId)
+        .get();
+    product = Product.fromJson(x);
     return product;
   }
 
@@ -123,6 +131,7 @@ class UserRepository {
       for (int i = 0; i < querySnapshot.docs.length; i++) {
         var a = querySnapshot.docs[i];
         var pro = Product.fromJson(a);
+        pro.productDocsId = querySnapshot.docs[i].id;
         product.add(pro);
       }
     });
@@ -143,10 +152,7 @@ class UserRepository {
 //     return currentUser != null;
 //   }
 
-//   Future<dynamic> getUser() async {
-//     final User? user = FirebaseAuth.instance.currentUser;
-//     return user;
-//   }
+
 
   //addData(email, email, email);
     //await userSetup(name, phone, user);

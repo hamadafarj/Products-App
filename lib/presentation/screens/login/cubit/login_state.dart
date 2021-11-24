@@ -19,7 +19,6 @@ class LoginLoadingState extends LoginState {
 
 class LoginSuccessState extends LoginState {
   final User user;
-
   const LoginSuccessState(this.user);
   @override
   List<Object> get props => [user];
