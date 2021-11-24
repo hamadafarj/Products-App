@@ -10,6 +10,10 @@ class Product {
   final DateTime productDate;
   final bool productsIsSale;
   int cardNumberItem = 0;
+//   double totalPrice=getTotalPrice*int.tryParse(productPrice);
+//   int getTotalPrice(){
+//   return 0;
+// }
   Product(
     this.productName,
     this.productImage,
@@ -18,6 +22,7 @@ class Product {
     this.productPrice,
     this.productDate,
     this.productsIsSale,
+    // this.totalPrice
   );
   factory Product.fromJson(DocumentSnapshot<Map<String, dynamic>> json) =>
       _productJson(json);
@@ -32,5 +37,6 @@ Product _productJson(DocumentSnapshot<Map<String, dynamic>> json) {
     json['products_price'] as String,
     (json['products_date'] as Timestamp).toDate(),
     json['products_isSale'] as bool,
+    //getTotalPrice * int.tryParse( json['products_price'])
   );
 }

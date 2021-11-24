@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:prayers_application/presentation/my_card/cubit/mycard_cubit.dart';
+
+import 'cubit/mycard_cubit.dart';
 
 class MyCardScreen extends StatefulWidget {
   const MyCardScreen({Key? key}) : super(key: key);
@@ -39,7 +40,7 @@ class _MyCardScreenState extends State<MyCardScreen> {
                       width: double.infinity,
                       padding: const EdgeInsets.all(12),
                       child: Text(
-                          "Total Products in cart: ${product.length.toString()}"),
+                          "Total Products in cart: ${product.length.toString()} Total Price ${state.totalPrice}"),
                     ),
                   ),
                 ),
@@ -94,13 +95,14 @@ class _MyCardScreenState extends State<MyCardScreen> {
                                     ),
                                     Row(
                                       children: [
+                                        Text(product[index]
+                                            .productPrice
+                                            .toString()),
                                         IconButton(
                                             onPressed: () {
                                               BlocProvider.of<MycardCubit>(
                                                       context)
-                                                  .increment(product[index]
-                                                          .cardNumberItem +
-                                                      1);
+                                                  .increment(product[index]);
                                             },
                                             icon: const Icon(Icons.add)),
                                         Text(product[index]
@@ -110,9 +112,7 @@ class _MyCardScreenState extends State<MyCardScreen> {
                                             onPressed: () {
                                               BlocProvider.of<MycardCubit>(
                                                       context)
-                                                  .decrement(product[index]
-                                                          .cardNumberItem -
-                                                      1);
+                                                  .decrement(product[index]);
                                             },
                                             icon: const Icon(Icons.remove)),
                                         IconButton(

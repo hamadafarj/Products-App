@@ -5,12 +5,16 @@ part 'mycard_state.dart';
 
 class MycardCubit extends Cubit<MycardState> {
   MycardCubit() : super(MycardInitial());
+  double totalPrice = 0;
   List<Product> cardItems = [];
   getCardProduct() async {
     emit(ChangeState());
     List<Product> product;
     product = cardItems;
-    emit(MyCardLoaded(product: product));
+    for (var item in cardItems) {
+      totalPrice += int.parse(item.productPrice);
+    }
+    emit(MyCardLoaded(product: product, totalPrice: totalPrice));
   }
 
   bool additemToList(Product item) {
@@ -26,26 +30,59 @@ class MycardCubit extends Cubit<MycardState> {
 
   void removeItemFromList(Product items) {
     emit(ChangeState());
+    cardItems.where((element) => element == items);
     cardItems.remove(items);
-    emit(MyCardLoaded(product: cardItems));
+    items.cardNumberItem = 0;
+    for (var item in cardItems) {
+      totalPrice -= int.parse(item.productPrice);
+    }
+    emit(MyCardLoaded(product: cardItems, totalPrice: totalPrice));
   }
 
-  void increment(int incrementItem) {
+  void increment(Product product) {
     emit(ChangeState());
-    var x = cardItems
+    cardItems.where((element) => element == product);
+    product.cardNumberItem = product.cardNumberItem + 1;
+    print("jjvvd ${product.productPrice} ");
+    var x = int.tryParse(product.productPrice);
+    if (x != null) {
+      x = (x + x);
+    }
+    product.productPrice = x.toString();
+    print("jjvvd ${product.productPrice} ");
+    for (var item in cardItems) {
+      totalPrice += int.parse(item.productPrice);
+    }
+    emit(MyCardLoaded(product: cardItems, totalPrice: totalPrice));
+  }
+
+  void decrement(Product product) {
+    emit(ChangeState());
+    cardItems.where((element) => element == product);
+    product.cardNumberItem = product.cardNumberItem - 1;
+    print("jjvvd ${product.productPrice} ");
+    var x = int.tryParse(product.productPrice);
+    if (x != null) {
+      x = (x - x);
+    }
+    product.productPrice = x.toString();
+    print("jjvvd ${product.productPrice} ");
+    for (var item in cardItems) {
+      totalPrice -= int.parse(item.productPrice);
+    }
+    emit(MyCardLoaded(product: cardItems, totalPrice: totalPrice));
+  }
+}
+
+
+
+/*
+    product.cardNumberItem = product.cardNumberItem + 1;
+  var x = cardItems
         .indexWhere((element) => element.cardNumberItem == incrementItem);
     print("ffff $x");
-    emit(MyCardLoaded(product: cardItems));
-  }
-
+*/
   //element.cardNumberItem + 1
-  void decrement(int decrementItem) {
-    emit(ChangeState());
-    var x =
-        cardItems.where((element) => element.cardNumberItem == decrementItem);
-    print("ffff $x");
-    emit(MyCardLoaded(product: cardItems));
-  }
 
   // void increment(int itemCount) {
   //   List<Product> product;
@@ -56,4 +93,3 @@ class MycardCubit extends Cubit<MycardState> {
   // void decrement(int itemCount) {
   //   emit(Decrement(product: cardItems, count: itemCount));
   // }
-}

@@ -13,7 +13,8 @@ class ChangeState extends MycardState {}
 
 class MyCardLoaded extends MycardState {
   final List<Product> product;
-  const MyCardLoaded({required this.product});
+  final double totalPrice;
+  const MyCardLoaded({required this.product, required this.totalPrice});
   @override
   List<Object> get props => [product];
 }

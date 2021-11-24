@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:prayers_application/constants/my_string.dart';
-import 'package:prayers_application/presentation/my_card/cubit/mycard_cubit.dart';
+import 'package:prayers_application/presentation/screens/my_card/cubit/mycard_cubit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'app_router.dart';
 
 void main() async {
